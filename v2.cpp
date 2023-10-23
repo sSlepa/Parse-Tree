@@ -48,12 +48,19 @@ void inorder(int nod){
         else
             cout << arb[nod];
     }
+    //cout << arb[nod] << ' ';
 
-    if(arb[nod * 2] != '\0' && arb[nod * 2 + 1] != '\0'){
-        
+    if(arb[nod] == '!'){
+        cout << '(';
+        inorder(nod * 2);
+        cout << ')';
+    }
+    else if(arb[nod * 2] != '\0' && arb[nod * 2 + 1] != '\0'){
+
         cout << '(';
     
         inorder(nod * 2);
+        
         cout << arb[nod];
 
         inorder(nod * 2 + 1);
@@ -69,12 +76,12 @@ int main(){
 	char p[100005];
 	char citire[100005];
 
-    for(int i = 1 ; i <= 10000000 ; ++i)
-        arb[i] = 0;
-
 	cin >> n;
     cin.get();
     for(int i = 1 ; i <= n ; ++i){
+
+        for(int j = 1 ; j <= 10000000 ; ++j)
+            arb[j] = 0;
 
         cin.getline(citire,100005);
 
@@ -97,8 +104,9 @@ int main(){
 
             //cout << nod << ' ';
 
-            if(p[i] == '('){	/// Merg in adancime cu nodurile
-                arb[nod] = '?';
+            if(p[i] == '('){/// Merg in adancime cu nodurile
+                if(nod == 1)
+                    arb[nod] = '?';
 
                 if((p[i + 1] >= 'a' && p[i + 1] <= 'z') || p[i + 1] == '('){ /// Marchez posibile "valori" in adancime
                     arb[nod * 2] = '?';
@@ -107,7 +115,7 @@ int main(){
                     
                 }
                 else if (p[i + 1] == '!'){ /// Adaug nod de negatie
-                    arb[nod * 2] = '!';
+                    arb[nod] = '!';
                     nod = nod * 2;
                 }
             }
@@ -139,7 +147,7 @@ int main(){
         inorder(1);
 
         cout << '\n' << '\n';
-
+        
         exit(0);
 
     }
