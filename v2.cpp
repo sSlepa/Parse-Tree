@@ -42,16 +42,14 @@ void inorder(int nod){
     if(arb[nod] == '\0')
         return;
 
-    if(arb[nod * 2] == '\0' && arb[nod * 2 + 1] == '\0'){
-        if(arb[nod / 2] == '!')
-            cout << '!' << arb[nod];
-        else
-            cout << arb[nod];
-    }
+    if(arb[nod * 2] == '\0' && arb[nod * 2 + 1] == '\0')
+        cout << arb[nod];
+    
     //cout << arb[nod] << ' ';
 
     if(arb[nod] == '!'){
         cout << '(';
+        cout << arb[nod];
         inorder(nod * 2);
         cout << ')';
     }
@@ -137,7 +135,7 @@ int main(){
                 if(nod / 2 != 0)
                     nod = nod / 2; /// Recursie spre radacina
                 
-            else if (p[i] == '!'){ /// nod de negare;;
+            else if(p[i] == '!'){ /// nod de negare;;
                 arb[nod] = '!';
                 nod = nod * 2;
             }
