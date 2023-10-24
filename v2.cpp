@@ -26,6 +26,9 @@ ofstream cout("date.out");
 
 char arb[400005];
 
+char verif[100005];
+int l = -1;
+
 void preorder(int nod){
 
     if(arb[nod] == '\0')
@@ -43,28 +46,29 @@ void inorder(int nod){
         return;
 
     if(arb[nod * 2] == '\0' && arb[nod * 2 + 1] == '\0')
-        cout << arb[nod];
+        verif[++l] = arb[nod];
     
-    //cout << arb[nod] << ' ';
-
     if(arb[nod] == '!'){
-        cout << '(';
-        cout << arb[nod];
+
+        verif[++l] = '(';
+        verif[++l] = arb[nod];
         inorder(nod * 2);
-        cout << ')';
+
+        verif[++l] = ')';
     }
 
     else if(arb[nod * 2] != '\0' && arb[nod * 2 + 1] != '\0'){
 
-        cout << '(';
+        verif[++l] = '(';
     
         inorder(nod * 2);
         
-        cout << arb[nod];
+        verif[++l] = arb[nod];
 
         inorder(nod * 2 + 1);
 
-        cout << ')';
+        verif[++l] = ')';
+
     }
 
 }
@@ -81,6 +85,9 @@ int main(){
 
         for(int j = 1 ; j <= 400000 ; ++j)
             arb[j] = 0;
+
+        verif[0] = 0;
+        l = -1;
 
         cin.getline(citire,100005);
 
@@ -148,6 +155,15 @@ int main(){
         preorder(1);
         cout << '\n';
         inorder(1);
+
+        verif[++l] = 0;
+
+        cout << verif << '\n';
+
+        if(strcmp(verif,p) == 0)
+            cout << "BINE FORMATA";
+        else
+            cout << "NU ESTE BINE FORMATA";
 
         cout << '\n' << '\n';
         
