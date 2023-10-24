@@ -9,16 +9,12 @@
 #include <map>
 #include <cmath>
 #include <chrono>
-#include <set>
 
 using namespace std;
 #define Inf 0x3f3f3f3f
 #define MAX 2000000000000000000LL
 #define mod 1000000007
 #define lsb (i & -i)
-#define pii pair<int,int>
-#define tup tuple<int,int,int>
-#define ll long long
 ///__builtin_popcount(x)
 
 ifstream cin("date.in");
@@ -30,13 +26,13 @@ struct nod{
 	char val;
 };
 
-nod* radacina = NULL;
+nod* radacina = nullptr;
 
 void adauga_st(nod*& poz, char val){
 
 	nod* nou = new nod();
 
-	nou->st = nou->dr = NULL;
+	nou->st = nou->dr = nullptr;
 	nou->val = '?';
 	nou->parinte = poz;
 
@@ -48,7 +44,7 @@ void adauga_dr(nod* &poz, char val){
 
 	nod* nou2 = new nod();
 
-	nou2->st = nou2->dr = NULL;
+	nou2->st = nou2->dr = nullptr;
 	nou2->val = '?';
 	nou2->parinte = poz;
 
@@ -57,54 +53,60 @@ void adauga_dr(nod* &poz, char val){
 }
 void preorder(struct nod* node){
 
-	if (node == NULL)
+	if (node == nullptr)
 		return;
 
 	cout << node->val << " ";
 
 	preorder(node->st);
 	preorder(node->dr);
+    
 }
 void inorder(struct nod* node){
 
     if(node == nullptr)
         return;
 
-    if(node->st == NULL && node->dr == NULL){
-        cout << node->val;
+    if(node->st == nullptr && node->dr == nullptr){
+        if(node->parinte->val == '!')
+            cout << '!' << node->val; 
+        else
+            cout << node->val;
         return;
     }    
+    /// Afisare custom pentru negare ->
+    /// Ar afisa p! in loc de !p daca nu se verifica
+
     cout << '(';
 
     inorder(node->st);
 
-    cout << node->val;
+    if(node->val != '!')
+        cout << node->val;
 
     inorder(node->dr);
 
     cout << ')';
 
 }
-// Crearea radacinii
 void root(nod*& poz){
 
 	nod* nou = new nod();
-	nou->dr = nou->st = NULL;
+	nou->dr = nou->st = nullptr;
 	nou->val = '?';
 
 	poz = radacina = nou;
 
 }
-// Functie pentru adaugarea nodului de negatie
 void adauga_neg(nod*& poz){
 
 	nod* nou = new nod();
 
-	nou->st = NULL;
+	nou->st = nullptr;
 	poz->st = nou;
 	nou->parinte = poz;
+    
 }
-
 
 int main(){
 
@@ -129,61 +131,65 @@ int main(){
 
             j++;
         }
+        /// Sterg spatiile sa fie mai usor de lucrat
+        
 
         p[++k] = 0;
 
         for(int i = 0; p[i] ; ++i){
-            if(p[i] == '('){	
+
+            if(p[i] == '('){	/// Merg in adancime cu nodurile
                 if(radacina == NULL)
                     root(poz);
 
-                if((p[i + 1] >= 'a' && p[i + 1] <= 'z') || p[i + 1] == '('){
+                if((p[i + 1] >= 'a' && p[i + 1] <= 'z') || p[i + 1] == '('){ /// Marchez posibile "valori" in adancime
                     adauga_st(poz, '?');
                     adauga_dr(poz, '?');
-                    poz = poz->st;
+                    poz = poz->st; /// Umplu ramura din stanga prima data
                     
                 }
-                else if (p[i + 1] == '!'){
+                else if (p[i + 1] == '!'){ /// Adaug nod de negatie
                     adauga_neg(poz);
                     poz->val = '!';
-                    poz = poz->st;
+                    poz = poz->st; 
 
                 }
             }
-            if(p[i] >= 'a' && p[i] <= 'z'){
+            if(p[i] >= 'a' && p[i] <= 'z'){ /// Pun "valoarea propozitionala" in nod
                 poz->val = p[i];
-                // Daca introduc un literal, urc in sus
-                poz = poz->parinte;
+                poz = poz->parinte; /// Urc inapoi in radacina subarborelui curent
                 
             }
             else if (p[i] == '=' || p[i] == '|' || p[i] == '&' || p[i] == '~'){
                 poz->val = p[i];
-                // Daca introduc un conector merg e celalalt fiu
+                // Merg dreapta ca sa completez (stanga am pus deja)
                 poz = poz->dr;
                 
             }
             else if (p[i] == ')')
-                if (poz->parinte != NULL){
-                    //Daca dau de paranteza inchisa, urc in sus o pozitie
-                    poz = poz->parinte;
-                }
-                else if (p[i] == '!'){
-                    adauga_neg(poz);
-                    poz->val = '!';
-                    // Daca introduc o negatie, inserez un singur nod si ma plasez o pozitie in jos
-                    poz = poz->st;
-                }
+                if(poz->parinte != NULL)
+                    poz = poz->parinte; /// Recursie spre radacina
+                
+            else if (p[i] == '!'){ /// nod de negare;;
+                adauga_neg(poz);
+                poz->val = '!'; 
+                poz = poz->st;
+            }
         }
+
+        /// Daca apare ? in forma poloneza inseamna ca propozitia nu e bine formata ->
+        /// Are paranteze in plus sau pozitionarea elementelor nu are sens in propozitie
+        cout << i << '\n';
         preorder(radacina);
         cout << '\n';
         inorder(radacina);
 
         cout << '\n' << '\n';
-        
+
+        //exit(0);
+
     }
 
-    
-    
     
     
 
@@ -198,4 +204,17 @@ int main(){
 ~ - implica
 = - echivalent
 
+10
+(((p ~ q) | s) = t)
+(p ~ ((! q) & (s ~ t)))
+(p ~ (q & (s ~ t)))
+((p ~ ( q & (s ~ t))))
+(!(b(!q)) & r) 
+(p & ((!q) ^ (!(!(q = (!r))))))
+((p | q) ~ !(p | q)) & (p | (!(!q)))
+(((p | q) ~ !(p | q)) & (p | (!(!q))))
+((p & q) | (p & (!q)) = p)
+
+
 */
+
