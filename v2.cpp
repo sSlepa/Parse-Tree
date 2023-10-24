@@ -24,7 +24,7 @@ using namespace std;
 ifstream cin("date.in");
 ofstream cout("date.out");
 
-char arb[10000005];
+char arb[400005];
 
 void preorder(int nod){
 
@@ -55,6 +55,7 @@ void inorder(int nod){
         inorder(nod * 2);
         cout << ')';
     }
+
     else if(arb[nod * 2] != '\0' && arb[nod * 2 + 1] != '\0'){
 
         cout << '(';
@@ -80,7 +81,7 @@ int main(){
     cin.get();
     for(int i = 1 ; i <= n ; ++i){
 
-        for(int j = 1 ; j <= 10000000 ; ++j)
+        for(int j = 1 ; j <= 400000 ; ++j)
             arb[j] = 0;
 
         cin.getline(citire,100005);
@@ -95,6 +96,8 @@ int main(){
             j++;
         }
         /// Sterg spatiile sa fie mai usor de lucrat
+        /// Problema are nevoie de parantezare corecta pentru a crea arborele corect
+        /// Lipsa parantezarii sau parantezele in plus duc la crearea / lipsa nivelelor in arbore
 
         p[++k] = 0;
 
@@ -134,21 +137,23 @@ int main(){
                 if(nod / 2 != 0)
                     nod = nod / 2; /// Recursie spre radacina
                 
-                else if (p[i] == '!'){ /// nod de negare;;
-                    arb[nod] = '!';
-                    nod = nod * 2;
-                }
+            else if (p[i] == '!'){ /// nod de negare;;
+                arb[nod] = '!';
+                nod = nod * 2;
+            }
         }
 
         /// Daca apare ? in forma poloneza inseamna ca propozitia nu e bine formata ->
-        /// Are paranteze in plus sau pozitionarea elementelor nu are sens in propozitie
+        /// Are paranteze in plus/minus sau pozitionarea elementelor nu are sens in propozitie
+
+        cout << i << '\n';
         preorder(1);
         cout << '\n';
         inorder(1);
 
         cout << '\n' << '\n';
         
-        exit(0);
+        //exit(0);
 
     }
 
@@ -156,3 +161,24 @@ int main(){
      
     return 0;
 }
+
+/*
+! - negatie
+& - si
+| - sau
+~ - implica
+= - echivalent
+
+10
+(((p ~ q) | s) = t)
+(p ~ ((! q) & (s ~ t)))
+(p ~ (q & (s ~ t)))
+((p ~ ( q & (s ~ t))))
+(!(b(!q)) & r) 
+(p & ((!q) ^ (!(!(q = (!r))))))
+((p | q) ~ !(p | q)) & (p | (!(!q)))
+(((p | q) ~ !(p | q)) & (p | (!(!q))))
+((p & q) | (p & (!q)) = p)
+
+
+*/
