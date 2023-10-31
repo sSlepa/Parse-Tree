@@ -76,22 +76,9 @@ void inorder(int nod){
 
     }
 }
-void afisare(const string& prefix, int nod, bool isLeft){
-	if(arb[nod] != 0){
-
-		cout << prefix;
-
-		cout << (isLeft ? " |-- " : " |-- ");
-
-	    cout << arb[nod] << '\n';
-
-		afisare(prefix + (isLeft ? " |   " : "     "), nod * 2, true);
-		afisare(prefix + (isLeft ? " |   " : "     "), nod * 2 + 1, false);
-	}
-}
 int eval(int nod){
 
-    if(arb[nod * 2] == 0 && arb[nod * 2 + 1] == 0)
+    if(arb[nod * 2] == 0 && arb[nod * 2 + 1] == 0) /// Nod frunza, adica intoarcem interpretarea atomului
         return mapa[arb[nod]];
     
     int valst;
@@ -129,13 +116,36 @@ int eval(int nod){
         return !valst;  
     }
 }
+void afisare(const string &prefix, int nod, bool isLeft){
+    
+    if(arb[nod] != 0){
+        if(nod != 1){
+            cout << prefix << (isLeft ? "L|─── " : "R└── ");
+            if(arb[nod] != '|')
+                cout << arb[nod] << '\n';
+            else
+                cout << '/' << '\n';
+        }
+        else{
+            cout << arb[nod];
+            cout << " ───╷\n";
+        }
+    afisare(prefix + (isLeft ? " │   " : "    "),nod * 2, true);
+    afisare(prefix + (isLeft ? " │   " : "    "),nod * 2 + 1, false);
+    }
+}
 int main(){
 
     int n;
 	char p[100005];
 	char citire[100005];
 
-    srand(time(0)); /// Generam random valori de 0 / 1 pentru propozitiile atomice
+    srand(time(0)); 
+
+    /// Generez random 0 si 1 pentru interpretare
+    /// Testez mai usor asa decat sa primesc input arbore, interpretare etc.
+    /// Pun propozitia in arbore, de preferat una bine formata
+    /// Si apoi evaluez expresia daca e bine formata
 
     cin.getline(citire,100005);
 
@@ -148,9 +158,9 @@ int main(){
 
         j++;
     }
-        /// Sterg spatiile sa fie mai usor de lucrat
-        /// Problema are nevoie de parantezare corecta pentru a crea arborele corect
-        /// Lipsa parantezarii sau parantezele in plus duc la crearea / lipsa nivelelor in arbore
+    /// Sterg spatiile sa fie mai usor de lucrat
+    /// Problema are nevoie de parantezare corecta pentru a crea arborele corect
+    /// Lipsa parantezarii sau parantezele in plus duc la crearea / lipsa nivelelor in arbore
 
     p[++k] = 0;
 
@@ -174,8 +184,9 @@ int main(){
         }
         if(p[i] >= 'a' && p[i] <= 'z'){ /// Pun "valoarea propozitionala" in nod
             arb[nod] = p[i];
-            mapa[arb[nod]] = rand() % 2; /// 0 sau 1 pentru propozitia curenta
-
+            mapa[arb[nod]] = rand() % 2;
+            /// Aici generez 0 sau 1 random pentru prop atomice
+        
             nod = nod / 2; /// Urc inapoi in radacina subarborelui curent
                 
         }
@@ -203,22 +214,28 @@ int main(){
 
     cout << p << '\n';
     cout << verif << '\n';
-    
+
     if(strcmp(verif,p) == 0){
         cout << "BINE FORMATA\n";
-        afisare("",1,false);
+    
+        cout << '\n';   
+
+        cout << "VALOAREA PROPOZITIEI : ";
+        cout << eval(1);
+        cout << '\n';
+        cout << "INTERPRETAREA :\n";
         for(auto i : mapa)
             cout << i.first << ' ' << i.second << '\n';
-        
+
         cout << '\n';
-        cout << eval(1);
+        cout << "ARBORELE CULCAT\n";
+        afisare("",1,false);
+        
     }
     else
         cout << "NU ESTE BINE FORMATA";
     
     
-
-
 
      
     return 0;
@@ -246,5 +263,6 @@ int main(){
 ((p=q)=(!(p~(!q))))
 (!(p ~ (q & p)))
 ((p&(!q)) | (q ~ r))
+
 
 */
