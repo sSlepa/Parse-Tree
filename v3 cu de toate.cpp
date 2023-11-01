@@ -25,24 +25,20 @@ ifstream cin("date.in");
 ofstream cout("date.out");
 
 char arb[400005];
-char verif[100005];
+char verif[100005]; 
 int l = -1;
 
-map<char,int> mapa;
+map<char,int> mapa; /// Interpretarea expresiei
 
-int level = 0;
-
-void preorder(int nod,int niv){
+void preorder(int nod){
 
     if(arb[nod] == '\0')
         return;
 
-    level = max(level,niv);
-
     cout << arb[nod] << ' ';
 
-    preorder(nod * 2,niv + 1);
-    preorder(nod * 2 + 1,niv + 1);
+    preorder(nod * 2);
+    preorder(nod * 2 + 1);
 
 }
 void inorder(int nod){
@@ -86,21 +82,16 @@ int eval(int nod){
 
     if(arb[nod] != '!'){
 
+        //Daca nu e negatie, se ramifica in 2 parti
         int valst = eval(nod * 2);
         int valdr = eval(nod * 2 + 1);
 
-        if(arb[nod] == '&'){
-            if(valst && valdr)
-                return 1;
-            else
-                return 0;
-        }
-        else if(arb[nod] == '|'){
-            if(valst || valdr)
-                return 1;
-            else
-                return 0;
-        }
+        if(arb[nod] == '&')
+            return valst && valdr;
+        
+        else if(arb[nod] == '|')
+            return valst || valdr;
+        
         else if(arb[nod] == '=')
             return valst == valdr;
 
@@ -112,10 +103,15 @@ int eval(int nod){
         }
     }
     else{
+        // Doar spre stanga
         valst = eval(nod * 2);
         return !valst;  
     }
 }
+/// Afisarea se face in fisier. In consola nu se afiseaza caracterele speciale
+/// Sau se inlocuiesc cu ( '|'  '-' 'L' ) 
+/// SAU | se inlocuieste cu / pentru a se distinge
+
 void afisare(const string &prefix, int nod, bool isLeft){
     
     if(arb[nod] != 0){
@@ -132,6 +128,7 @@ void afisare(const string &prefix, int nod, bool isLeft){
         }
     afisare(prefix + (isLeft ? " │   " : "    "),nod * 2, true);
     afisare(prefix + (isLeft ? " │   " : "    "),nod * 2 + 1, false);
+
     }
 }
 int main(){
@@ -164,9 +161,10 @@ int main(){
 
     p[++k] = 0;
 
-    int nod = 1;
+    int nod = 1; 
 
     for(int i = 0; p[i] ; ++i){
+        
         if(p[i] == '('){/// Merg in adancime cu nodurile
             if(nod == 1)
                 arb[nod] = '?';
@@ -203,17 +201,23 @@ int main(){
             arb[nod] = '!';
             nod = nod * 2;
         }
+        /*
+        Afisare pe pasi
+        afisare("",1,false);
+        cout << '\n';
+        */
     }
-    /// Daca apare ? in forma poloneza inseamna ca propozitia nu e bine formata ->
+    /// Daca apare ? in forma poloneza (sau propozitia initiala nu e egala cu cea din arbore) propozitia nu e bine formata ->
     /// Are paranteze in plus/minus sau pozitionarea elementelor nu are sens in propozitie
-    preorder(1,0);
+
+    preorder(1);
     inorder(1);
     cout << '\n';
 
     verif[++l] = 0;
 
-    cout << p << '\n';
-    cout << verif << '\n';
+    cout << p << '\n'; /// Initiala
+    cout << verif << '\n'; /// Parcusa in ordine 
 
     if(strcmp(verif,p) == 0){
         cout << "BINE FORMATA\n";
@@ -223,12 +227,13 @@ int main(){
         cout << "VALOAREA PROPOZITIEI : ";
         cout << eval(1);
         cout << '\n';
+
         cout << "INTERPRETAREA :\n";
         for(auto i : mapa)
             cout << i.first << ' ' << i.second << '\n';
 
         cout << '\n';
-        cout << "ARBORELE CULCAT\n";
+        //cout << "ARBORELE\n\n";
         afisare("",1,false);
         
     }
@@ -242,13 +247,14 @@ int main(){
 }
 
 /*
+
 ! - negatie
 & - si
 | - sau
 ~ - implica
 = - echivalent
 
-14
+14 
 (((p ~ q) | s) = t)
 ((p ~ ( q & (s ~ t))))
 (!(b(!q)) & r) 
@@ -263,6 +269,7 @@ int main(){
 ((p=q)=(!(p~(!q))))
 (!(p ~ (q & p)))
 ((p&(!q)) | (q ~ r))
+
 
 
 */
