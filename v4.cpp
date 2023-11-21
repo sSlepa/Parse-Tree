@@ -138,6 +138,8 @@ void verificareprop(){
     for(auto i : mapa)
         cout << i.first << ' ';
     
+    cout << 'E';
+    
     cout <<'\n';
 
     for(int msk = 0 ; msk < (1 << k) ; ++msk){
@@ -153,6 +155,8 @@ void verificareprop(){
 
         bool val = eval(1);
 
+        cout << val << ' ';
+
         if(val == 0)
             Valida = 0;
         else if(val == 1)
@@ -167,7 +171,7 @@ void verificareprop(){
     else if(Valida == 0 && Satisfiabila == 0)
         cout << "NESATISFIABILA\n";
     else if(Valida == 0 && Satisfiabila == 1)
-        cout << "SATISFIABILA SI NEVALIDA\n";
+        cout << "SATISFIABILA\n";
 
 }
 int main(){
@@ -296,7 +300,6 @@ int main(){
 (((!r) | s) & ((!s) | r))
 (((p & (!q)) & (!r)) | (!q))
 (((p | q) & ((!p) | r)) ~ (q | r))
-
 
 
 
