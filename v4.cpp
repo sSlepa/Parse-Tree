@@ -10,15 +10,31 @@
 #include <cmath>
 #include <chrono>
 #include <set>
+#include <iomanip>
+#include <list>
+#include <sstream>
+#include <functional>
+#include <numeric>
+#include <string>
+#include <unordered_set>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
 
 using namespace std;
+using namespace chrono;
+using namespace __gnu_pbds;
 #define Inf 0x3f3f3f3f
 #define MAX 2000000000000000000LL
-#define mod 1000000007
-#define lsb (i & -i)
+#define MOD 1000000007
+#define MODC 984162946217979097
+#define lsb(i) (i & -i)
 #define pii pair<int,int>
+#define pll pair<ll,ll>
 #define tup tuple<int,int,int>
 #define ll long long
+#define fastio ios::sync_with_stdio(false);cin.tie(0);cout.tie(0);
+typedef tree<ll, null_type, less_equal<ll>, rb_tree_tag, tree_order_statistics_node_update> ost;
+
 ///__builtin_popcount(x)
 
 ifstream cin("date.in");
@@ -29,6 +45,9 @@ char verif[100005];
 int l = -1;
 
 map<char,int> mapa;
+
+vector<pair<char,int> > FND[1005],FNC[1005];
+int pasFND = -1,pasFNC = -1;
 
 void preorder(int nod){
 
@@ -129,6 +148,49 @@ void afisare(const string &prefix, int nod, bool isLeft){
     }
 }
 
+void FND_FNC(){
+
+    cout <<'\n';
+    cout << "Formula in FND : \n";
+    for(int i = 0 ; i <= pasFND ; ++i){
+        cout << "(";
+        
+        for(int j = 0 ; j < FND[i].size() ; ++j){
+            if(FND[i][j].second == 1)
+                cout << FND[i][j].first;
+            else
+                cout << "!" << FND[i][j].first;
+            
+            if(j != FND[i].size() - 1)
+                cout << " & ";
+        }
+
+        cout << ")";
+        if(i != pasFND)
+            cout << " | ";
+    } 
+
+    cout << '\n' << '\n';
+    cout << "Formula in FNC : \n";
+    for(int i = 0 ; i <= pasFNC ; ++i){
+        cout << "(";
+        
+        for(int j = 0 ; j < FNC[i].size() ; ++j){
+            if(FNC[i][j].second == 1)
+                cout << FNC[i][j].first;
+            else
+                cout << "!" << FNC[i][j].first;
+            
+            if(j != FNC[i].size() - 1)
+                cout << " | ";
+        }
+
+        cout << ")";
+        if(i != pasFNC)
+            cout << " & ";
+    }     
+}
+
 void verificareprop(){
 
     int Valida = 1,Nesatisfiabila,Satisfiabila = 0;
@@ -142,20 +204,19 @@ void verificareprop(){
     
     cout <<'\n';
 
-    for(int msk = 0 ; msk < (1 << k) ; ++msk){
+    for(int msk = (1 << k) - 1 ; msk >= 0 ; --msk){
 
-        int j = 0;
+        int j = mapa.size() - 1;
 
         for(auto i : mapa)
-            mapa[i.first] = (bool)((1 << j) & msk),j++;
+            mapa[i.first] = (bool)((1 << j) & msk),j--;
 
-        
         for(auto i : mapa)
             cout << i.second << ' ';
 
         bool val = eval(1);
 
-        cout << val << ' ';
+        cout << val;
 
         if(val == 0)
             Valida = 0;
@@ -163,15 +224,28 @@ void verificareprop(){
             Satisfiabila = 1;
 
         cout <<'\n';
-  
+
+        if(val){
+            pasFND++;
+            for(auto i : mapa)
+                FND[pasFND].push_back({i.first,i.second});
+        }
+        else if(!val){
+            pasFNC++;
+            for(auto i : mapa)
+                FNC[pasFNC].push_back({i.first,!i.second});
+        }
     }   
     cout <<'\n';
+
     if(Valida == 1)
         cout << "VALIDA\n";
     else if(Valida == 0 && Satisfiabila == 0)
         cout << "NESATISFIABILA\n";
     else if(Valida == 0 && Satisfiabila == 1)
         cout << "SATISFIABILA\n";
+
+    FND_FNC();
 
 }
 int main(){
@@ -300,7 +374,12 @@ int main(){
 (((!r) | s) & ((!s) | r))
 (((p & (!q)) & (!r)) | (!q))
 (((p | q) & ((!p) | r)) ~ (q | r))
+(((a & b) & (c & d)) & (e & f))
 
+((!((!((r | (!q)) = (r ~ q))) & (q & (!r))) ) ~ q)
 
+(((((p | q) | (!r)) & ((!p) | r)) & ((p | (!q)) | s)) & ((((!p) | (!q)) | (!r)) & (p | (!s))))
+
+((((((!a) | (!b)) | c) & (a | d)) & (b | e)) & ((!f) & (((!g) | (!d)) | (!e))))
 
 */
