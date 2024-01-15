@@ -137,6 +137,7 @@ void afisare(const string &prefix, int nod, bool isLeft){
                 cout << arb[nod] << '\n';
             else
                 cout << '/' << '\n';
+                
         }
         else{
             cout << arb[nod];
@@ -254,8 +255,6 @@ int main(){
 	char p[100005];
 	char citire[100005];
 
-    //srand(time(0)); 
-
     cin.getline(citire,100005);
 
     int j = 0;
@@ -267,7 +266,7 @@ int main(){
 
         j++;
     }
-
+    
     /// Problema are nevoie de parantezare corecta pentru a crea arborele corect
     
     p[++k] = 0;
@@ -310,7 +309,7 @@ int main(){
             arb[nod] = '!';
             nod = nod * 2;
         }
-
+        
     }
     preorder(1);
     inorder(1);
@@ -352,7 +351,7 @@ int main(){
 
 (((p ~ q) | s) = t)
 ((p ~ ( q & (s ~ t))))
-(!(b(!q)) & r) 
+(!(b(!q)) & r)
 (p & ((!q) & (!(!(q = (!r))))))
 ((p | q) ~ !(p | q)) & (p | (!(!q)))
 (((p | q) ~ (!(p | q))) & (p | (!(!q))))
